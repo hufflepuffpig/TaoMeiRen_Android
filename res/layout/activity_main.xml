@@ -1,0 +1,71 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+    <HorizontalScrollView 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:scrollbars="none"
+        android:id="@+id/title_scrollview">
+
+        <LinearLayout
+            android:layout_width="354dp"
+            android:layout_height="wrap_content"
+            android:background="#3e000000" >
+
+            <TextView 
+                android:id="@+id/titlebar_item_oneprice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="一口价专场"
+                android:textSize="15sp"
+                android:textColor="@android:color/white"
+                android:singleLine="true"
+                android:layout_margin="15dp"
+                android:clickable="true"
+                android:onClick="Ontitlebar_item_click"/>
+            <TextView 
+                android:id="@+id/titlebar_item_collective_buying"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="团购专场"
+                android:textSize="15sp"
+                android:textColor="@android:color/white"
+                android:singleLine="true"
+                android:layout_margin="15dp"
+                android:clickable="true"
+                android:onClick="Ontitlebar_item_click"/>
+            <TextView 
+                android:id="@+id/titlebar_item_auction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="竞拍专场"
+                android:textSize="15sp"
+                android:textColor="@android:color/white"
+                android:singleLine="true"
+                android:layout_margin="15dp"
+                android:clickable="true"
+                android:onClick="Ontitlebar_item_click"/>
+            <TextView 
+                android:id="@+id/titlebar_item_personal_center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="个人中心"
+                android:textSize="15sp"
+                android:textColor="@android:color/white"
+                android:singleLine="true"
+                android:layout_margin="15dp"
+                android:clickable="true"
+                android:onClick="Ontitlebar_item_click"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <FrameLayout 
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/title_scrollview">
+        
+    </FrameLayout>
+
+</RelativeLayout>
