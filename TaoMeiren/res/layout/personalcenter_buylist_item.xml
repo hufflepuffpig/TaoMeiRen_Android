@@ -10,23 +10,23 @@
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/selllist_item_mailOfBuyer"/>
+            android:text="你通过"/>
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="通过"/>
+            android:id="@+id/buylist_item_dealType"/>
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/selllist_item_dealType"/>
+            android:text="方式购买"/>
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="方式购买你的"/>
+            android:id="@+id/buylist_item_mailOfseller"/>
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/selllist_item_name"/>
+            android:text="的产品"/>
     </LinearLayout>
     
     <LinearLayout 
@@ -36,12 +36,21 @@
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:text="名称:"/>
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:id="@+id/buylist_item_name"/>
+        <TextView 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:text="数量:"/>
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
-            android:id="@+id/selllist_item_itemNum"/>
+            android:id="@+id/buylist_item_itemNum"/>
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,13 +58,24 @@
         <TextView 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/selllist_item_deposit"/>
+            android:id="@+id/buylist_item_deposit"/>
+    </LinearLayout>
+    <LinearLayout 
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <Button 
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:id="@+id/buylist_item_OKbtn"
             android:padding="1dp"
-            android:text="发货"
-            android:id="@+id/selllist_item_btn"/>
+            android:text="确认收货"/>
+        <Button 
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/buylist_item_Cancelbtn"
+            android:padding="1dp"
+            android:text="取消交易"/>
     </LinearLayout>
 
 </LinearLayout>

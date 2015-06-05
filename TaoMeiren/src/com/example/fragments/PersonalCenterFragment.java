@@ -1,19 +1,31 @@
 package com.example.fragments;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.example.adapter.BuyListAdapter;
+import com.example.adapter.SellListAdapter;
+import com.example.model.BuyListNode;
+import com.example.model.SellListNode;
 import com.example.taomeiren.MainActivity;
 import com.example.taomeiren.R;
 import com.example.taomeiren.SellActivity;
+import com.example.utils.GlobalValues;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,8 +41,11 @@ public class PersonalCenterFragment extends Fragment
 {
 	private SharedPreferences sharedPreferences;
 	private View view;
-	private ListView sellListView,buyListView;
-	private AsyncHttpClient client=new AsyncHttpClient();;
+	private ListView sell_listview,buy_listview;
+	private SellListAdapter sellListAdapter;
+	private BuyListAdapter buyListAdapter;
+	private AsyncHttpClient client=new AsyncHttpClient();
+	private PersonalCenterReceiver receiver;
 	
 	
 	@Override
@@ -40,18 +55,29 @@ public class PersonalCenterFragment extends Fragment
 		// TODO Auto-generated method stub
 		sharedPreferences=getActivity().getSharedPreferences("data", getActivity().MODE_PRIVATE);
 		view=inflater.inflate(R.layout.personal_center_fragment_main, null);
-		sellListView=(ListView) view.findViewById(R.id.loginlayer_sell_list);
-		buyListView=(ListView) view.findViewById(R.id.loginlayer_buy_list);
+		receiver=new PersonalCenterReceiver();
+		IntentFilter filter=new IntentFilter(GlobalValues.UPDATE_PERSONAL);
+		getActivity().registerReceiver(receiver, filter);
+		sell_listview=(ListView) view.findViewById(R.id.loginlayer_sell_list);
+		buy_listview=(ListView) view.findViewById(R.id.loginlayer_buy_list);
 		updateView();
+		initBtn();
 		return view;
 	}
 	
-	@Override
-	public void onActivityCreated(Bundle savedInstanceState)
+	public void updateView()
 	{
-		// TODO Auto-generated method stub
-		super.onActivityCreated(savedInstanceState);
-		initBtn();
+		if(sharedPreferences.contains("email"))
+		{
+			view.findViewById(R.id.layer_without_login).setVisibility(View.INVISIBLE);
+			view.findViewById(R.id.layer_with_login).setVisibility(View.VISIBLE);
+			((TextView)view.findViewById(R.id.loginlayer_email_tv)).setText(sharedPreferences.getString("email", null));
+			setAccount((TextView)view.findViewById(R.id.loginlayer_account_tv));
+			initListViews();
+		}else {
+			view.findViewById(R.id.layer_without_login).setVisibility(View.VISIBLE);
+			view.findViewById(R.id.layer_with_login).setVisibility(View.INVISIBLE);
+		}
 	}
 
 	public void initBtn()
@@ -100,6 +126,7 @@ public class PersonalCenterFragment extends Fragment
 			@Override
 			public void onClick(View v)
 			{
+				Log.e("Lin", "click");
 				final String email=((EditText)view.findViewById(R.id.email_editer)).getText().toString();
 				final String password=((EditText)view.findViewById(R.id.password_editer)).getText().toString();
 				final RequestParams params=new RequestParams();
@@ -187,17 +214,100 @@ public class PersonalCenterFragment extends Fragment
 		});
 	}
 
-	public void updateView()
+	
+
+	public void initListViews()
 	{
-		if(sharedPreferences.contains("email"))
+		sellListAdapter=new SellListAdapter(getActivity());
+		sell_listview.setAdapter(sellListAdapter);
+		client.get(MainActivity.IP+"getSellItem.php", new RequestParams("email", sharedPreferences.getString("email", null)), 
+				new JsonHttpResponseHandler()
 		{
-			view.findViewById(R.id.layer_without_login).setVisibility(View.INVISIBLE);
-			view.findViewById(R.id.layer_with_login).setVisibility(View.VISIBLE);
-			((TextView)view.findViewById(R.id.loginlayer_email_tv)).setText(sharedPreferences.getString("email", null));
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers,
+					JSONArray response)
+			{
+				List<SellListNode> nodes=new ArrayList<>();
+				for(int i=0;i<response.length();i++)
+				{
+					try
+					{
+						JSONObject object=response.getJSONObject(i);
+						SellListNode node=new SellListNode();
+						node.orderID=object.getInt("orderID");
+						node.mailOfbuyer=object.getString("mailOfbuyer");
+						node.itemNum=object.getInt("itemNum");
+						node.deposit=object.getDouble("deposit");
+						node.dealType=object.getInt("dealType");
+						node.name=object.getString("name");
+						nodes.add(node);
+					} catch (JSONException e){e.printStackTrace();}
+				}
+				sellListAdapter.setData(nodes);
+			}
+			
+		});
+		
+		buyListAdapter=new BuyListAdapter(getActivity());
+		buy_listview.setAdapter(buyListAdapter);
+		client.get(MainActivity.IP+"getBuyItem.php", new RequestParams("email", sharedPreferences.getString("email", null)), 
+				new JsonHttpResponseHandler()
+		{
+
+			@Override
+			public void onSuccess(int statusCode, Header[] headers,
+					JSONArray response)
+			{
+				List<BuyListNode> nodes=new ArrayList<>();
+				Log.e("Lin", "respon num:"+response.length());
+				for(int i=0;i<response.length();i++)
+				{
+					try
+					{
+						JSONObject object=response.getJSONObject(i);
+						BuyListNode node=new BuyListNode();
+						node.dealType=object.getInt("dealType");
+						node.orderID=object.getInt("orderID");
+						node.mailOfseller=object.getString("mailOfseller");
+						node.itemNum=object.getInt("itemNum");
+						node.deposit=object.getDouble("deposit");
+						node.name=object.getString("name");
+						nodes.add(node);
+//						Log.e("Lin", "num********************"+i);
+//						Log.e("Lin", node.dealType+"");
+//						Log.e("Lin", node.orderID+"");
+//						Log.e("Lin", node.mailOfseller+"");
+//						Log.e("Lin", node.itemNum+"");
+//						Log.e("Lin", node.deposit+"");
+//						Log.e("Lin", node.name+"");
+					} catch (JSONException e){e.printStackTrace();}
+				}
+				buyListAdapter.setData(nodes);
+			}
+			
+		});
+	}
+
+	
+	private class PersonalCenterReceiver extends BroadcastReceiver
+	{
+
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
 			setAccount((TextView)view.findViewById(R.id.loginlayer_account_tv));
-		}else {
-			view.findViewById(R.id.layer_without_login).setVisibility(View.VISIBLE);
-			view.findViewById(R.id.layer_with_login).setVisibility(View.INVISIBLE);
 		}
+		
+	}
+
+
+	
+	@Override
+	public void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		getActivity().unregisterReceiver(receiver);
 	}
 }

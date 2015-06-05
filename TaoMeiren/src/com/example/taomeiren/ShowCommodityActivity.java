@@ -17,6 +17,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -245,5 +248,96 @@ public class ShowCommodityActivity extends Activity
 				});
 			}
 		});
+		
+		layer3_btn.setOnClickListener(new OnClickListener()
+		{
+			
+			@Override
+			public void onClick(View v)
+			{
+				double currentPrice=Double.parseDouble(layer3_editor.getText().toString());
+				if(currentPrice<auction.activePrice || currentPrice<auction.currentPrice)
+				{
+					Toast.makeText(ShowCommodityActivity.this, "价格太低不能参与竞投", Toast.LENGTH_SHORT).show();
+					return;
+				}
+				RequestParams params=new RequestParams();
+				params.put("dealType",3);
+				params.put("commodityID", auction.commodity.commodityID);
+				params.put("mailOfbuyer", sharedPreferences.getString("email", null));
+				params.put("mailOfseller", auction.commodity.mailOfseller);
+				params.put("stock", auction.commodity.stock);
+				params.put("currentPrice", currentPrice);
+				params.put("ID", auction.ID);
+				auction.currentMail=sharedPreferences.getString("email", null);
+				auction.currentPrice=currentPrice;
+				auction.mailOfparticipants+="("+sharedPreferences.getString("email", null)+","+currentPrice+")";
+				client.get(MainActivity.IP+"writeOrder.php", params, new AsyncHttpResponseHandler()
+				{
+					
+					@Override
+					public void onSuccess(int arg0, Header[] arg1, byte[] arg2)
+					{
+						if(new String(arg2).equals("1"))
+						{
+							Toast.makeText(ShowCommodityActivity.this, "竞拍成功", Toast.LENGTH_SHORT).show();
+							Intent intent=new Intent(GlobalValues.UPDATE_AUCTION);
+							intent.putExtra("position", position);
+							intent.putExtra("auction", auction);
+							sendBroadcast(intent);
+							ShowCommodityActivity.this.finish();
+						}
+					}
+					
+					@Override
+					public void onFailure(int arg0, Header[] arg1, byte[] arg2, Throwable arg3)
+					{
+						// TODO Auto-generated method stub
+						
+					}
+				});
+			}
+		});
 	}
+
+
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		// TODO Auto-generated method stub
+		MenuInflater inflater=getMenuInflater();
+		inflater.inflate(R.menu.main, menu);
+		return super.onCreateOptionsMenu(menu);
+	}
+
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		// TODO Auto-generated method stub
+		if(item.getItemId()==R.id.comment)
+		{
+			int commodityID=1;
+			switch (from)
+			{
+			case GlobalValues.FROM_COMMODITY:
+				commodityID=commodity.commodityID;
+				break;
+			case GlobalValues.FROM_COLLECTIVE_BUYING:
+				commodityID=collectiveBuying.commodity.commodityID;
+				break;
+			case GlobalValues.FROM_AUCTION:
+				commodityID=auction.commodity.commodityID;
+				break;
+			}
+			Intent intent=new Intent(this, CommentActivity.class);
+			intent.putExtra("commodityID", commodityID);
+			startActivity(intent);
+			
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	
+
 }

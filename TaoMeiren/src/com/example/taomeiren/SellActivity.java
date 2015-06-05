@@ -5,12 +5,14 @@ import java.io.FileNotFoundException;
 
 import org.apache.http.Header;
 
+import com.example.utils.GetFilePath;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.drawable.BitmapDrawable;
@@ -207,6 +209,11 @@ public class SellActivity extends Activity
 			if(imgFile.exists())
 				Log.e("lin", img_path);
 			
+			/*String img_path=new GetFilePath(this).getRealPath(uri);
+			Log.e("lin", img_path);
+			imgFile = new File(img_path);
+			if(imgFile.exists())
+				Log.e("lin", img_path);*/
 		}
 		
 	}

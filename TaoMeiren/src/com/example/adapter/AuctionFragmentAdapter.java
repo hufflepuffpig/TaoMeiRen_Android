@@ -95,4 +95,12 @@ public class AuctionFragmentAdapter extends BaseAdapter
 		notifyDataSetChanged();
 	}
 
+	public void updateData(int position,Auction auction)
+	{
+		Auction item=lists.get(position);
+		item.currentPrice=auction.currentPrice;
+		item.currentMail=auction.currentMail;
+		item.mailOfparticipants=auction.mailOfparticipants;
+		notifyDataSetChanged();
+	}
 }

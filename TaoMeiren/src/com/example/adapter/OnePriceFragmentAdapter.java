@@ -94,11 +94,7 @@ public class OnePriceFragmentAdapter extends BaseAdapter
 
 	public void updateData(Commodity updateCommodity,int position)
 	{
-		if(updateCommodity.stock>0)
-			commodities.get(position).stock=updateCommodity.stock;
-		else {
-			commodities.remove(position);
-		}
+		commodities.get(position).stock=updateCommodity.stock;
 	}
 }
 

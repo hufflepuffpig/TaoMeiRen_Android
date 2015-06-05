@@ -22,7 +22,10 @@ import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -37,6 +40,7 @@ public class AuctionFragment extends Fragment
 	private PullToRefreshListView listView;
 	private AuctionFragmentAdapter myAdapter;
 	private AsyncHttpClient client;
+	private AuctionReceiver receiver;
 	private int mCurLoadAuctionNum=0;
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -45,6 +49,11 @@ public class AuctionFragment extends Fragment
 		// TODO Auto-generated method stub
 		View view=inflater.inflate(R.layout.auction_fragment_main, null);
 		client=new AsyncHttpClient();
+		receiver=new AuctionReceiver();
+		IntentFilter filter=new IntentFilter(GlobalValues.UPDATE_AUCTION);
+		getActivity().registerReceiver(receiver, filter);
+		
+		
 		listView=(PullToRefreshListView) view.findViewById(R.id.auction_fragment_list);
 		myAdapter=new AuctionFragmentAdapter(getActivity());
 		listView.setAdapter(myAdapter);
@@ -123,4 +132,26 @@ public class AuctionFragment extends Fragment
 		});
 	}
 
+	private class AuctionReceiver extends BroadcastReceiver
+	{
+
+		@Override
+		public void onReceive(Context context, Intent intent)
+		{
+			int position=intent.getIntExtra("position", 0);
+			Auction auction=(Auction) intent.getSerializableExtra("auction");
+			myAdapter.updateData(position, auction);
+		}
+		
+	}
+
+	
+	@Override
+	public void onDestroy()
+	{
+		// TODO Auto-generated method stub
+		super.onDestroy();
+		getActivity().unregisterReceiver(receiver);
+	}
+	
 }

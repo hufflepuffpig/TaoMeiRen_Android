@@ -84,9 +84,7 @@
        	       android:text="注销"/>
        </LinearLayout>
 
-       <ScrollView
-           android:layout_width="match_parent"
-           android:layout_height="match_parent" >
+       
 
            <LinearLayout
                android:layout_width="match_parent"
@@ -102,21 +100,21 @@
                <ListView
                    android:id="@+id/loginlayer_sell_list"
                    android:layout_width="match_parent"
-                   android:layout_height="200dp" />
-
-               <TextView
+                   android:layout_height="100dp" />
+               
+               <TextView 
                    android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
-                   android:layout_margin="10dp"
-                   android:text="购买订单" />
-
+                   android:layout_marginTop="20dp"
+                   android:text="购买订单"/>
+               
                <ListView
                    android:id="@+id/loginlayer_buy_list"
                    android:layout_width="match_parent"
-                   android:layout_height="200dp" />
-       
+                   android:layout_height="100dp" />
+                     
        		</LinearLayout>
-       </ScrollView>
+      
    </LinearLayout>
 
 </FrameLayout>
